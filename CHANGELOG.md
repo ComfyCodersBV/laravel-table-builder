@@ -2,7 +2,7 @@
 
 All notable changes to `laravel-table-builder` will be documented in this file.
 
-## 1.0.0 - Unreleased
+## 1.0.0 - 2026-10-13
 
 * The PHP side of `tranquil-tools/laravel-vue-table-builder` 1.8.1 plus its unreleased bulk action choices, polling
   and row classes, extracted into a package of its own: `AbstractTable`, `TableBuilder`, `QueryBuilder`, the
