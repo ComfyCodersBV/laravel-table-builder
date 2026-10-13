@@ -1,0 +1,18 @@
+# Changelog
+
+All notable changes to `laravel-table-builder` will be documented in this file.
+
+## 1.0.0 - Unreleased
+
+* The PHP side of `tranquil-tools/laravel-vue-table-builder` 1.8.1 plus its unreleased bulk action choices, polling
+  and row classes, extracted into a package of its own: `AbstractTable`, `TableBuilder`, `QueryBuilder`, the
+  components and concerns, CSV export, the signed bulk-action, reorder and export endpoints, and `make:table`. The
+  namespace `TranquilTools\TableBuilder\` is unchanged.
+* The payload carries `schemaVersion` (`TableBuilder::SCHEMA_VERSION`, starting at `1.0`) for renderers to check.
+* Configuration is read from `config/table-builder.php`. A published `config/vue-table-builder.php` is merged over it
+  at registration, logged as deprecated in debug mode, and `config('vue-table-builder.*')` keeps resolving to the merged
+  values. Changing `vue-table-builder.*` at runtime no longer affects the tables; set `table-builder.*` instead.
+* Translations use the `table-builder::` namespace, with `vue-table-builder::` as an alias. Overrides published in
+  `lang/vendor/vue-table-builder` are used until `lang/vendor/table-builder` exists.
+* The bulk-action and reorder endpoints answer JSON whenever the request expects JSON, without checking for an
+  `X-Inertia` header. An Inertia visit asks for HTML, so it still gets the redirect back.
