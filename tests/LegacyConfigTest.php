@@ -46,7 +46,23 @@ it('applies the per page defaults of a published legacy file', function () {
     $provider->register();
     $provider->boot();
 
-    expect(TableBuilder::getDefaultPerPage())->toBe(5);
+    expect(TableBuilder::getDefaultPerPage())->toBe(5)
+        ->and(config('table-builder.per_page_options'))->toBe([5, 10])
+        ->and(TableBuilder::for([])->toArray()['perPageOptions'])->toBe([5, 10]);
+});
+
+it('replaces list values of a published legacy file instead of merging them by index', function () {
+    config()->set('table-builder.routes.middleware', ['web', 'auth', 'verified']);
+    config()->set('vue-table-builder', [
+        'routes' => [
+            'middleware' => ['api'],
+        ],
+    ]);
+
+    (new TableBuilderServiceProvider(app()))->register();
+
+    expect(config('table-builder.routes.middleware'))->toBe(['api'])
+        ->and(config('table-builder.routes.signature_ttl'))->toBe(720);
 });
 
 it('still resolves translations under the legacy namespace', function () {

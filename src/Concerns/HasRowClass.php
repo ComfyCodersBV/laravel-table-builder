@@ -35,7 +35,7 @@ trait HasRowClass
         $class = call_user_func($this->rowClassCallback, $item);
 
         if (is_array($class)) {
-            $class = array_filter($class);
+            $class = $this->classNames($class);
         }
 
         if (empty($class)) {
@@ -45,5 +45,22 @@ trait HasRowClass
         $itemArray['__class'] = $class;
 
         return $itemArray;
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $classes
+     * @return list<string>
+     */
+    private function classNames(array $classes): array
+    {
+        return collect($classes)
+            ->flatMap(fn (mixed $value, int|string $key): array => match (true) {
+                is_array($value) => $this->classNames($value),
+                is_int($key) => [$value],
+                default => [$value ? $key : null],
+            })
+            ->filter(fn (mixed $class): bool => is_string($class) && $class !== '')
+            ->values()
+            ->all();
     }
 }

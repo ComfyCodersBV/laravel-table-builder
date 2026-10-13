@@ -27,11 +27,13 @@ class TableBulkActionController extends Controller
             throw new AuthorizationException;
         }
 
-        if (! array_key_exists($key, $table->make()->getBulkActions())) {
+        $bulkActions = $table->make()->getBulkActions();
+
+        if (! array_key_exists($key, $bulkActions)) {
             abort(404);
         }
 
-        $choice = $this->validatedChoice($request, $table->make()->getBulkActions()[$key]);
+        $choice = $this->validatedChoice($request, $bulkActions[$key]);
 
         $ids = $request->input('ids', []);
 

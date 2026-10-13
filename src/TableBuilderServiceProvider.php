@@ -56,7 +56,7 @@ class TableBuilderServiceProvider extends PackageServiceProvider
         $legacy = config('vue-table-builder');
 
         if (is_array($legacy) && $legacy !== []) {
-            config()->set('table-builder', array_replace_recursive(
+            config()->set('table-builder', $this->mergeConfiguration(
                 config('table-builder', []),
                 $legacy,
             ));
@@ -65,6 +65,24 @@ class TableBuilderServiceProvider extends PackageServiceProvider
         }
 
         config()->set('vue-table-builder', config('table-builder'));
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $defaults
+     * @param  array<array-key, mixed>  $overrides
+     * @return array<array-key, mixed>
+     */
+    private function mergeConfiguration(array $defaults, array $overrides): array
+    {
+        foreach ($overrides as $key => $value) {
+            $default = $defaults[$key] ?? null;
+
+            $defaults[$key] = is_array($value) && is_array($default) && ! array_is_list($value)
+                ? $this->mergeConfiguration($default, $value)
+                : $value;
+        }
+
+        return $defaults;
     }
 
     private function warnAboutLegacyConfigurationFile(): void
