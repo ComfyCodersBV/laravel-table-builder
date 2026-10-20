@@ -2,7 +2,7 @@
 
 All notable changes to `laravel-table-builder` will be documented in this file.
 
-## Unreleased
+## 1.1.0 - 2026-10-20
 * The `confirm` of a row action also takes a closure. It gets the row, like `url`, `visible` and `disabled`, and is
   resolved per row, so the payload still carries a string or `null`:
   `confirm: fn (App $app) => "Disconnect {$app->name}?"`. A closure that returns `null` or an empty string asks no
