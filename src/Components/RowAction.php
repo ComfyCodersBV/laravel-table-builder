@@ -25,7 +25,7 @@ class RowAction
         public string|Closure|null $url = null,
         public ?string $route = null,
         string $method = 'get',
-        public ?string $confirm = null,
+        public string|Closure|null $confirm = null,
         public string $variant = 'outline',
         public bool|Closure $visible = true,
         public bool|string|Closure $disabled = false,
@@ -70,7 +70,7 @@ class RowAction
             'label' => $this->label,
             'url' => $url,
             'method' => $this->method,
-            'confirm' => $this->confirm,
+            'confirm' => $this->confirmFor($item),
             'variant' => $this->variant,
             'disabled' => is_string($disabled) ? $disabled !== '' : (bool) $disabled,
             'disabledReason' => is_string($disabled) && $disabled !== '' ? $disabled : null,
@@ -93,6 +93,17 @@ class RowAction
         }
 
         return $this->visible;
+    }
+
+    private function confirmFor(mixed $item): ?string
+    {
+        if (! $this->confirm instanceof Closure) {
+            return $this->confirm;
+        }
+
+        $confirm = call_user_func($this->confirm, $item);
+
+        return is_string($confirm) && $confirm !== '' ? $confirm : null;
     }
 
     private function urlFor(mixed $item): ?string

@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-table-builder` will be documented in this file.
 
+## Unreleased
+* The `confirm` of a row action also takes a closure. It gets the row, like `url`, `visible` and `disabled`, and is
+  resolved per row, so the payload still carries a string or `null`:
+  `confirm: fn (App $app) => "Disconnect {$app->name}?"`. A closure that returns `null` or an empty string asks no
+  confirmation for that row. A string confirm works as before.
+
 ## 1.0.0 - 2026-10-13
 * The PHP side of `tranquil-tools/laravel-vue-table-builder` 1.8.1 plus its unreleased bulk action choices, polling
   and row classes, extracted into a package of its own: `AbstractTable`, `TableBuilder`, `QueryBuilder`, the

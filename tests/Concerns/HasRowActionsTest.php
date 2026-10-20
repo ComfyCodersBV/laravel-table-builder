@@ -132,3 +132,41 @@ it('marks a download action and keeps the payload of other actions unchanged', f
 it('refuses a download action with another method than get', function () {
     TableBuilder::for([])->rowAction('PDF', url: '/pdf', method: 'post', download: true);
 })->throws(InvalidArgumentException::class);
+
+it('resolves a confirm closure per row', function () {
+    $table = TableBuilder::for([
+        ['id' => 1, 'name' => 'Claude'],
+        ['id' => 2, 'name' => 'ChatGPT'],
+    ]);
+
+    $table->rowAction('Disconnect', url: '/disconnect', method: 'delete', confirm: fn (array $row) => "Disconnect {$row['name']}?");
+
+    $rowActions = $table->toArray()['rowActions'];
+
+    expect($rowActions[0][0]['confirm'])->toBe('Disconnect Claude?')
+        ->and($rowActions[1][0]['confirm'])->toBe('Disconnect ChatGPT?');
+});
+
+it('asks no confirmation for a row whose confirm closure returns nothing', function () {
+    $table = TableBuilder::for([
+        ['id' => 1, 'connected' => true],
+        ['id' => 2, 'connected' => false],
+    ]);
+
+    $table->rowAction('Disconnect', url: '/disconnect', confirm: fn (array $row) => $row['connected'] ? 'Sure?' : '');
+
+    $rowActions = $table->toArray()['rowActions'];
+
+    expect($rowActions[0][0]['confirm'])->toBe('Sure?')
+        ->and($rowActions[1][0]['confirm'])->toBeNull();
+});
+
+it('passes the model to the confirm closure of a query table', function () {
+    Product::create(['name' => 'Chair', 'sku' => 'AAA-1']);
+
+    $table = TableBuilder::for(Product::query());
+
+    $table->column('name')->rowAction('Delete', url: '/delete', method: 'delete', confirm: fn (Product $product) => "Delete {$product->name}?");
+
+    expect($table->toArray()['rowActions'][0][0]['confirm'])->toBe('Delete Chair?');
+});

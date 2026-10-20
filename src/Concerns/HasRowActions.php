@@ -21,7 +21,7 @@ trait HasRowActions
         string|Closure|null $url = null,
         ?string $route = null,
         string $method = 'get',
-        ?string $confirm = null,
+        string|Closure|null $confirm = null,
         string $variant = 'outline',
         bool|Closure $visible = true,
         bool|string|Closure $disabled = false,
