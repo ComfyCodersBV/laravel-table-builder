@@ -51,7 +51,7 @@ class TableBuilder implements Arrayable, JsonSerializable
     use HasSearchInputs;
     use HasTotals;
 
-    public const SCHEMA_VERSION = '1.0';
+    public const SCHEMA_VERSION = '1.1';
 
     const DEFAULT_NAME = 'default';
 
