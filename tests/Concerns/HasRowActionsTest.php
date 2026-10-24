@@ -170,3 +170,39 @@ it('passes the model to the confirm closure of a query table', function () {
 
     expect($table->toArray()['rowActions'][0][0]['confirm'])->toBe('Delete Chair?');
 });
+
+it('sends the icon of an action', function () {
+    $table = TableBuilder::for([['id' => 1]]);
+
+    $table->rowAction('Enable', url: '/enable', method: 'put', icon: 'power');
+
+    expect($table->toArray()['rowActions'][0][0]['icon'])->toBe('power');
+});
+
+it('sends no icon key for an action without an icon', function () {
+    $table = TableBuilder::for([['id' => 1]]);
+
+    $table->rowAction('Edit', url: '/edit', icon: '');
+
+    expect($table->toArray()['rowActions'][0][0])->not->toHaveKey('icon');
+});
+
+it('resolves an icon closure per row', function () {
+    $table = TableBuilder::for([
+        ['id' => 1, 'enabled' => true],
+        ['id' => 2, 'enabled' => false],
+        ['id' => 3, 'enabled' => null],
+    ]);
+
+    $table->rowAction('Toggle', url: '/toggle', method: 'put', icon: fn (array $row): ?string => match ($row['enabled']) {
+        true => 'power-off',
+        false => 'power',
+        null => null,
+    });
+
+    $rowActions = $table->toArray()['rowActions'];
+
+    expect($rowActions[0][0]['icon'])->toBe('power-off')
+        ->and($rowActions[1][0]['icon'])->toBe('power')
+        ->and($rowActions[2][0])->not->toHaveKey('icon');
+});

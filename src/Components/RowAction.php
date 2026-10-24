@@ -30,6 +30,7 @@ class RowAction
         public bool|Closure $visible = true,
         public bool|string|Closure $disabled = false,
         public bool|string $download = false,
+        public string|Closure|null $icon = null,
     ) {
         $this->method = strtolower($method);
 
@@ -47,7 +48,7 @@ class RowAction
     }
 
     /**
-     * @return array{key: string, label: string, url: string, method: string, confirm: string|null, variant: string, disabled: bool, disabledReason: string|null, download?: bool|string}|null
+     * @return array{key: string, label: string, url: string, method: string, confirm: string|null, variant: string, disabled: bool, disabledReason: string|null, download?: bool|string, icon?: string}|null
      */
     public function resolve(mixed $item): ?array
     {
@@ -76,6 +77,12 @@ class RowAction
             'disabledReason' => is_string($disabled) && $disabled !== '' ? $disabled : null,
         ];
 
+        $icon = $this->iconFor($item);
+
+        if (! is_null($icon)) {
+            $resolved['icon'] = $icon;
+        }
+
         if ($this->download === false || $this->download === '') {
             return $resolved;
         }
@@ -84,6 +91,15 @@ class RowAction
             ...$resolved,
             'download' => $this->download,
         ];
+    }
+
+    private function iconFor(mixed $item): ?string
+    {
+        $icon = $this->icon instanceof Closure
+            ? call_user_func($this->icon, $item)
+            : $this->icon;
+
+        return is_string($icon) && $icon !== '' ? $icon : null;
     }
 
     private function isVisibleFor(mixed $item): bool

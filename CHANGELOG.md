@@ -2,6 +2,13 @@
 
 All notable changes to `laravel-table-builder` will be documented in this file.
 
+## Unreleased
+* A row action takes an optional `icon`: a name such as `icon: 'power'`, or a closure that gets the row, like `url`,
+  `visible` and `confirm`, for an icon per row: `icon: fn (AppTool $tool) => $tool->enabled ? 'power-off' : 'power'`.
+  The payload carries `icon` only when there is one, so actions without an icon are sent exactly as before. The core
+  only passes the name on; the renderer decides which icon it stands for.
+* `SCHEMA_VERSION` is now `1.1`.
+
 ## 1.1.0 - 2026-10-20
 * The `confirm` of a row action also takes a closure. It gets the row, like `url`, `visible` and `disabled`, and is
   resolved per row, so the payload still carries a string or `null`:
